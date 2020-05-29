@@ -8,11 +8,14 @@ import {
   Platform,
   Image,
   Alert,
+  SafeAreaView,
 } from 'react-native';
+
 import Icon from 'react-native-vector-icons/dist/Ionicons';
 import {connect} from 'react-redux';
-import {createUser} from '../action/AuthAction';
+import {createUserSuccess, createUserFail} from '../action/AuthAction';
 import {BubblesLoader} from 'react-native-indicators';
+import {firebaseApp} from '../api/firebaseConfig';
 
 class SignUp extends Component {
   constructor(props) {
@@ -34,10 +37,8 @@ class SignUp extends Component {
     var re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
     return re.test(email);
   }
-  componentDidMount() {
-    console.log('componentDidMount: ' + this.props.data);
-  }
-  onSignUp = () => {
+
+  onSignUp = async () => {
     const {firstName, lastName, email, password, confirmPassword} = this.state;
     console.log(firstName, lastName, email, password, confirmPassword);
 
@@ -79,48 +80,68 @@ class SignUp extends Component {
         },
       ]);
       return;
+    } else if (confirmPassword != password) {
+      Alert.alert('Alert', "Those passwords didn't match. Try again.", [
+        {
+          text: 'Cancel',
+          onPress: () => console.log('Cancel Pressed'),
+          style: 'cancel',
+        },
+        {
+          text: 'Ok',
+          onPress: () => console.log('Install Pressed'),
+        },
+      ]);
+      return;
     } else {
-      console.log('OK' + email, password);
-      this.props.navigation.navigate('Login');
-      this.props.createUser(email, password);
+      let id = 1;
+      console.log('True');
+      firebaseApp
+        .auth()
+        .createUserWithEmailAndPassword(email, password)
+        .then(user => {
+          console.log('Create Success: ', user);
+          this.props.createUserSuccess(user);
+
+          this.props.navigation.navigate('Login');
+
+          firebaseApp
+            .database()
+            .ref(`user/profile`)
+            .push({
+              userName: firstName + lastName,
+              email: email,
+              password: password,
+              following: 0,
+              followers: 0,
+              permission: false,
+            });
+        })
+        .catch(error => {
+          this.props.createUserFail(error);
+          console.log('Eroor Creact Success: ', error.message);
+          Alert.alert('Alert', error.message, [
+            {
+              text: 'Cancel',
+              onPress: () => console.log('Cancel Pressed'),
+              style: 'cancel',
+            },
+            {
+              text: 'Ok',
+              onPress: () => console.log('Install Pressed'),
+            },
+          ]);
+          return;
+        });
+      // this.props.navigation.navigate('Home');
     }
   };
-  renderButtons() {
-    const Divider = props => {
-      return (
-        <View {...props}>
-          <View style={styles.line} />
-          <Text style={styles.textOr}> OR</Text>
-          <View style={styles.line} />
-        </View>
-      );
-    };
-    if (this.props.data.loading) {
-      return <BubblesLoader />;
-    } else {
-      return (
-        <View style={styles.viewInput}>
-          <TouchableOpacity
-            onPress={this.onSignUp.bind(this)}
-            style={styles.btnSignUp}>
-            <Text style={{fontSize: 16, color: 'white'}}>Sign Up</Text>
-          </TouchableOpacity>
-          <Divider style={styles.divider} />
-          <TouchableOpacity style={styles.btnPhoneNumber}>
-            <Text style={{fontSize: 16, color: '#f57f17'}}>
-              Create With Phone Number
-            </Text>
-          </TouchableOpacity>
-        </View>
-      );
-    }
-  }
 
   render() {
     return (
-      <View style={styles.container}>
+      <SafeAreaView style={styles.container}>
         <TouchableOpacity
-          onPress={() => this.props.navigation.navigate('Splash')}
+          onPress={() => this.props.navigation.navigate('Login')}
           style={styles.btngoback}>
           <Icon name="ios-arrow-back" color="#f57f17" size={32} />
         </TouchableOpacity>
@@ -157,7 +178,7 @@ class SignUp extends Component {
           <TextInput
             style={styles.edtInputEmail}
             placeholder="E-mail !"
-            keyboardType="default"
+            keyboardType="email-address"
             returnKeyType="next"
             onChangeText={email => this.setState({email: email})}
           />
@@ -171,18 +192,25 @@ class SignUp extends Component {
           />
           <TextInput
             style={styles.edtInputPass}
-            placeholder="Password !"
+            placeholder="Confirm Password !"
             keyboardType="default"
             returnKeyType="done"
             secureTextEntry={true}
             onChangeText={confirm => this.setState({confirmPassword: confirm})}
           />
         </View>
-        {this.renderButtons()}
-      </View>
+        <View style={styles.viewInput}>
+          <TouchableOpacity
+            onPress={this.onSignUp.bind(this)}
+            style={styles.btnSignUp}>
+            <Text style={{fontSize: 16, color: 'white'}}>Sign Up</Text>
+          </TouchableOpacity>
+        </View>
+      </SafeAreaView>
     );
   }
 }
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -198,17 +226,17 @@ const styles = StyleSheet.create({
     color: '#f57f17',
     position: 'absolute',
     left: 32,
-    top: Platform.OS == 'ios' ? 100 : 70,
+    top: Platform.OS == 'ios' ? 100 : 60,
     fontWeight: 'bold',
   },
   createimg: {
-    top: Platform.OS == 'ios' ? 160 : 130,
+    top: Platform.OS == 'ios' ? 160 : 120,
     position: 'absolute',
     alignSelf: 'center',
   },
   imgcreateimg: {
-    width: 100,
-    height: 100,
+    width: Platform.OS == 'ios' ? 100 : 90,
+    height: Platform.OS == 'ios' ? 100 : 90,
     borderRadius: 10000,
   },
   btnCamera: {
@@ -216,8 +244,8 @@ const styles = StyleSheet.create({
     width: 35,
     height: 35,
     position: 'absolute',
-    top: 65,
-    left: 75,
+    top: Platform.OS == 'ios' ? 65 : 55,
+    left: Platform.OS == 'ios' ? 75 : 65,
     zIndex: 5,
     justifyContent: 'center',
     alignItems: 'center',
@@ -230,8 +258,8 @@ const styles = StyleSheet.create({
   },
   textOr: {
     flex: 1,
-    marginTop: 20,
-    marginBottom: 20,
+    marginTop: Platform.OS == 'ios' ? 20 : 10,
+    marginBottom: Platform.OS == 'ios' ? 20 : 10,
     textAlign: 'center',
   },
   divider: {
@@ -257,10 +285,8 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     width: 270,
     height: 49,
-    borderWidth: 1,
     borderRadius: 999,
-    borderColor: '#f57f17',
-    backgroundColor: 'white',
+    backgroundColor: 'rgb(1, 154, 235)',
   },
   edtInputFirstName: {
     width: 300,
@@ -270,7 +296,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     paddingLeft: 30,
     marginBottom: 30,
-    marginTop: 280,
+    marginTop: Platform.OS == 'ios' ? 260 : 250,
   },
   edtInputLastName: {
     width: 300,
@@ -301,16 +327,12 @@ const styles = StyleSheet.create({
   },
 });
 
-const mapStateToProps = state => {
-  console.log('mapStateToProps : ' + JSON.stringify(state));
-  return {
-    data: state.authentication,
-    // logged: state.auth.loggedIn,
-    // user: state.auth.user,
-  };
-};
+const mapDispatchToProps = dispatch => ({
+  createUserSuccess: user => dispatch(createUserSuccess(user)),
+  createUserFail: error => dispatch(createUserFail(error)),
+});
 
 export default connect(
-  mapStateToProps,
-  {createUser},
+  null,
+  mapDispatchToProps,
 )(SignUp);

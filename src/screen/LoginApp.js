@@ -6,49 +6,140 @@ import {
   TextInput,
   TouchableOpacity,
   Platform,
-  ScrollView,
+  Alert,
+  SafeAreaView,
+  Modal,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/dist/Ionicons';
 import {connect} from 'react-redux';
 import {BubblesLoader} from 'react-native-indicators';
-import {loginUser} from '../action/AuthAction';
-
+import {LoginButton, AccessToken, LoginManager} from 'react-native-fbsdk';
+import {firebaseApp} from '../api/firebaseConfig';
+import {loginUserSuccess} from '../action/AuthAction';
+import * as firebase from 'firebase';
+import Loading from '../component/ModelLoad';
 class LoginApp extends Component {
   constructor(props) {
     super(props);
-    this.state = {email: '', password: '', error: ''};
+    this.state = {email: '', password: '', error: '', load: false};
   }
-  static navigationOptions = {
+  navigationOptions = {
     headerShown: false,
   };
   validateEmail(email) {
     var re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
     return re.test(email);
   }
+
+  // Login user
+
   onLogin = () => {
     const {email, password} = this.state;
     let errorName = 'Please enter your information !';
+    this.setState({load: true});
     if (email == null || email == '') {
       this.setState({error: errorName});
+      this.setState({load: false});
+
       return;
     } else if (password == null || password == '') {
       this.setState({error: errorName});
+      this.setState({load: false});
       return;
     } else if (!this.validateEmail(email)) {
       let errorEmail = 'Invalid field E-mail !';
       this.setState({error: errorEmail});
+      this.setState({load: false});
       return;
     } else {
-      this.props.loginUser(email, password);
+      this.setState({error: ''});
+      console.log('Value ' + email, password);
+      firebaseApp
+        .auth()
+        .signInWithEmailAndPassword(email, password)
+        .then(user => {
+          console.log('LoginSuccess: ' + user);
+
+          this.props.loginUserSuccess(user);
+          this.props.navigation.navigate('Home');
+          this.setState({load: false});
+        })
+        .catch(error => {
+          console.log(error);
+          this.setState({load: false});
+          Alert.alert(
+            'Alert ',
+            'Error: ' + error.message,
+            [{text: 'OK', onPress: () => console.log('OK Pressed')}],
+            {cancelable: false},
+          );
+        });
     }
-    //console.log('Value ' + email, password, this.props.auth.loading);
-    // this.props.navigation.navigate('Home');
   };
+
+//   navigate(routeName) {
+//     this.props.navigator.push({
+//       name: routeName,
+//     });
+//   }
+//   componentWillMount() {
+//     this.unsubscribe = firebase.auth().onAuthStateChanged(user => {
+//       if (!user) {
+//         this.navigate('register');
+//       }
+//     });
+//   }
+//   componentWillUnmount() {
+//     this.unsubscribe();
+//   }
+
   componentDidMount() {
-    console.log('componentDidMount: ' + JSON.stringify(this.props));
+    console.log(
+      'componentDidMount: ' + JSON.stringify(this.props.auth.isLogin),
+    );
+    // firebaseApp.auth().onAuthStateChanged(function(user) {
+    //   console.log('User: ', user);
+    //   if (user) {
+    //     this.props.navigation.navigate('Home');
+    //   } else {
+    //     this.props.navigation.navigate('Login');
+    //   }
+    // });
   }
 
-  renderButtons() {
+  // Login Facebook
+
+  onLoginFacebook = async () => {
+    try {
+      const result = await LoginManager.logInWithPermissions([
+        'public_profile',
+        'email',
+      ]);
+      const tokenData = await AccessToken.getCurrentAccessToken();
+      const token = tokenData.accessToken.toString();
+      const credential = firebase.auth.FacebookAuthProvider.credential(token);
+      const user = await firebaseApp.auth().signInWithCredential(credential);
+
+      firebaseApp
+        .database()
+        .ref(`user/profile`)
+        .push({
+          userName: user.user.displayName,
+          image: user.user.photoURL,
+          phone: user.user.phoneNumber,
+          email: user.user.email,
+          following: 0,
+          followers: 0,
+          permission: false,
+        });
+      this.props.navigation.navigate('Home');
+    } catch (error) {
+      console.log(error.message);
+    }
+  };
+
+  render() {
+    const {load} = this.state;
     const Divider = props => {
       return (
         <View {...props}>
@@ -58,34 +149,8 @@ class LoginApp extends Component {
         </View>
       );
     };
-    if (this.props.auth.loading) {
-      return <BubblesLoader />;
-    } else {
-      return (
-        <View style={styles.viewInput}>
-          <TouchableOpacity onPress={this.onLogin} style={styles.btnLogin}>
-            <Text style={{fontSize: 16, color: 'white'}}>Log In</Text>
-          </TouchableOpacity>
-          <Divider style={styles.divider} />
-          <TouchableOpacity style={styles.btnfacebook}>
-            <Text style={{fontSize: 16, color: 'white'}}>
-              Login With Facebook
-            </Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            onPress={() => this.props.navigation.navigate('SignUpPhone')}
-            style={{marginTop: 30}}>
-            <Text style={{fontSize: 16, color: '#f57f17', alignSelf: 'center'}}>
-              Login with phone number
-            </Text>
-          </TouchableOpacity>
-        </View>
-      );
-    }
-  }
-  render() {
     return (
-      <View style={styles.container}>
+      <SafeAreaView style={styles.container}>
         <TouchableOpacity
           onPress={() => this.props.navigation.navigate('Splash')}
           style={styles.btngoback}>
@@ -103,16 +168,27 @@ class LoginApp extends Component {
           <TextInput
             style={styles.edtInputPass}
             placeholder="Password !"
-            keyboardType="email-address"
+            keyboardType="default"
+            secureTextEntry={true}
             onChangeText={pass => this.setState({password: pass})}
           />
         </View>
-        <Text style={styles.txtError}>
-          {this.props.auth.errorLogin}
-          {this.state.error}
-        </Text>
-        {this.renderButtons()}
-      </View>
+        <Text style={styles.txtError}>{this.state.error}</Text>
+        <View style={styles.viewInput}>
+          <TouchableOpacity onPress={this.onLogin} style={styles.btnLogin}>
+            <Text style={{fontSize: 16, color: 'white'}}>Log In</Text>
+          </TouchableOpacity>
+          <Divider style={styles.divider} />
+          <TouchableOpacity
+            onPress={this.onLoginFacebook}
+            style={styles.btnfacebook}>
+            <Text style={{fontSize: 16, color: 'white'}}>
+              Login With Facebook
+            </Text>
+          </TouchableOpacity>
+        </View>
+        <Loading modalVisible={load} animationType="fade" />
+      </SafeAreaView>
     );
   }
 }
@@ -203,4 +279,12 @@ const mapStateToProps = state => {
     // user: state.auth.user,
   };
 };
-export default connect(mapStateToProps,{loginUser},)(LoginApp);
+const mapDispatchToProps = dispatch => ({
+  //dispatching action
+  loginUserSuccess: user => dispatch(loginUserSuccess(user)),
+});
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps,
+)(LoginApp);

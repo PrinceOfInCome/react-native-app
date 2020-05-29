@@ -17,6 +17,7 @@
 		2D02E4BD1E0B4A84006451C7 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
 		2D02E4BF1E0B4AB3006451C7 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
 		2DCD954D1E0B4F2C00145EB5 /* social_networkTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 00E356F21AD99517003FC87E /* social_networkTests.m */; };
+		415B4BA8247AE57900C3CC8A /* social_netwok.swift in Sources */ = {isa = PBXBuildFile; fileRef = 415B4BA7247AE57900C3CC8A /* social_netwok.swift */; };
 		576F06D089852474361FCDF9 /* libPods-social_networkTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 1688497E11224EF5024F939C /* libPods-social_networkTests.a */; };
 		A2986081C9B8CF65E86433A8 /* libPods-social_network.a in Frameworks */ = {isa = PBXBuildFile; fileRef = BDA0FE0A3D1CE4603C98303D /* libPods-social_network.a */; };
 		B5056ED63CD3300B283E20B1 /* libPods-social_network-tvOSTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 498D0BE4377B60663AF180CC /* libPods-social_network-tvOSTests.a */; };
@@ -56,6 +57,8 @@
 		2D02E4901E0B4A5D006451C7 /* social_network-tvOSTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "social_network-tvOSTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		2DEF7D458102C3A73ECE38FC /* libPods-social_network-tvOS.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-social_network-tvOS.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		370AC4D256610CB3B506A00E /* Pods-social_network.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-social_network.release.xcconfig"; path = "Target Support Files/Pods-social_network/Pods-social_network.release.xcconfig"; sourceTree = "<group>"; };
+		415B4BA6247AE57900C3CC8A /* social_network-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "social_network-Bridging-Header.h"; sourceTree = "<group>"; };
+		415B4BA7247AE57900C3CC8A /* social_netwok.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = social_netwok.swift; sourceTree = "<group>"; };
 		498D0BE4377B60663AF180CC /* libPods-social_network-tvOSTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-social_network-tvOSTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		77309B713DA07455B3FFB21D /* Pods-social_network-tvOSTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-social_network-tvOSTests.debug.xcconfig"; path = "Target Support Files/Pods-social_network-tvOSTests/Pods-social_network-tvOSTests.debug.xcconfig"; sourceTree = "<group>"; };
 		9668B86F31C7793E946B4E8C /* Pods-social_network-tvOS.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-social_network-tvOS.debug.xcconfig"; path = "Target Support Files/Pods-social_network-tvOS/Pods-social_network-tvOS.debug.xcconfig"; sourceTree = "<group>"; };
@@ -159,12 +162,14 @@
 		83CBB9F61A601CBA00E9B192 = {
 			isa = PBXGroup;
 			children = (
+				415B4BA7247AE57900C3CC8A /* social_netwok.swift */,
 				13B07FAE1A68108700A75B9A /* social_network */,
 				832341AE1AAA6A7D00B99B32 /* Libraries */,
 				00E356EF1AD99517003FC87E /* social_networkTests */,
 				83CBBA001A601CBA00E9B192 /* Products */,
 				2D16E6871FA4F8E400B85C8A /* Frameworks */,
 				B9EA318DCFEB1D147CCF5FE9 /* Pods */,
+				415B4BA6247AE57900C3CC8A /* social_network-Bridging-Header.h */,
 			);
 			indentWidth = 2;
 			sourceTree = "<group>";
@@ -194,7 +199,6 @@
 				B52E9A753469077623E3FE23 /* Pods-social_networkTests.debug.xcconfig */,
 				FB61ABF0FEB9E2F281559649 /* Pods-social_networkTests.release.xcconfig */,
 			);
-			name = Pods;
 			path = Pods;
 			sourceTree = "<group>";
 		};
@@ -293,6 +297,9 @@
 						CreatedOnToolsVersion = 6.2;
 						TestTargetID = 13B07F861A680F5B00A75B9A;
 					};
+					13B07F861A680F5B00A75B9A = {
+						LastSwiftMigration = 1140;
+					};
 					2D02E47A1E0B4A5D006451C7 = {
 						CreatedOnToolsVersion = 8.2.1;
 						ProvisioningStyle = Automatic;
@@ -309,6 +316,7 @@
 			developmentRegion = English;
 			hasScannedForEncodings = 0;
 			knownRegions = (
+				English,
 				en,
 				Base,
 			);
@@ -439,6 +447,7 @@
 			);
 			inputPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-social_network/Pods-social_network-resources.sh",
+				"${PODS_ROOT}/FBSDKCoreKit/FacebookSDKStrings.bundle",
 				"${PODS_ROOT}/../../node_modules/react-native-vector-icons/Fonts/AntDesign.ttf",
 				"${PODS_ROOT}/../../node_modules/react-native-vector-icons/Fonts/Entypo.ttf",
 				"${PODS_ROOT}/../../node_modules/react-native-vector-icons/Fonts/EvilIcons.ttf",
@@ -458,6 +467,7 @@
 			);
 			name = "[CP] Copy Pods Resources";
 			outputPaths = (
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/FacebookSDKStrings.bundle",
 				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/AntDesign.ttf",
 				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/Entypo.ttf",
 				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/EvilIcons.ttf",
@@ -578,6 +588,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				13B07FBC1A68108700A75B9A /* AppDelegate.m in Sources */,
+				415B4BA8247AE57900C3CC8A /* social_netwok.swift in Sources */,
 				13B07FC11A68108700A75B9A /* main.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -631,6 +642,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = B52E9A753469077623E3FE23 /* Pods-social_networkTests.debug.xcconfig */;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"DEBUG=1",
@@ -654,6 +666,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = FB61ABF0FEB9E2F281559649 /* Pods-social_networkTests.release.xcconfig */;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				COPY_PHASE_STRIP = NO;
 				INFOPLIST_FILE = social_networkTests/Info.plist;
@@ -675,6 +688,7 @@
 			baseConfigurationReference = DD22F38C8BC5E807B15E5DD4 /* Pods-social_network.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_MODULES = YES;
 				CURRENT_PROJECT_VERSION = 1;
 				DEAD_CODE_STRIPPING = NO;
 				INFOPLIST_FILE = social_network/Info.plist;
@@ -684,8 +698,11 @@
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "org.reactjs.native.example.$(PRODUCT_NAME:rfc1034identifier)";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.social-network";
 				PRODUCT_NAME = social_network;
+				SWIFT_OBJC_BRIDGING_HEADER = "social_network-Bridging-Header.h";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
 				VERSIONING_SYSTEM = "apple-generic";
 			};
 			name = Debug;
@@ -695,6 +712,7 @@
 			baseConfigurationReference = 370AC4D256610CB3B506A00E /* Pods-social_network.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_MODULES = YES;
 				CURRENT_PROJECT_VERSION = 1;
 				INFOPLIST_FILE = social_network/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
@@ -703,8 +721,10 @@
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "org.reactjs.native.example.$(PRODUCT_NAME:rfc1034identifier)";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.social-network";
 				PRODUCT_NAME = social_network;
+				SWIFT_OBJC_BRIDGING_HEADER = "social_network-Bridging-Header.h";
+				SWIFT_VERSION = 5.0;
 				VERSIONING_SYSTEM = "apple-generic";
 			};
 			name = Release;

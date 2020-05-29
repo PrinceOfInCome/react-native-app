@@ -6,9 +6,7 @@ export default class SplashApp extends Component {
     super(props);
     this.state = {};
   }
-  static navigationOptions = {
-    headerShown: false,
-  };
+
   render() {
     const Divider = props => {
       return (

@@ -6,18 +6,52 @@ import {
   TextInput,
   TouchableOpacity,
   Platform,
+  SafeAreaView,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/dist/Ionicons';
+import {firebaseApp} from '../api/firebaseConfig';
 
 export default class SignUpPhoneApp extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {};
-  }
   static navigationOptions = {
     headerShown: false,
   };
+  constructor(props) {
+    super(props);
+    this.state = {
+      phoneNumber: '+84 ',
+      confirmResult: null,
+      verifycationCode: '',
+      userId: '',
+    };
+  }
 
+  validatePhoneNumber = () => {
+    var regexp = /^\+[0-9]?()[0-9](\s|\S)(\d[0-9]{8,16})$/;
+    return regexp.test(this.state.phone);
+  };
+  onSendCode = () => {
+    const {phoneNumber} = this.state;
+    let phone = '+84' + phoneNumber.slice(1);
+    console.log(phone);
+
+    //this.props.navigation.navigate('VerifycodeApp');
+    // if (this.validatePhoneNumber()) {
+    firebaseApp
+      .auth()
+      .signInWithPhoneNumber(phone)
+      .then(confirmResult => {
+        console.log('ConfirmResult: ' + confirmResult);
+        this.setState({confirmResult});
+      })
+      .catch(error => {
+        alert(error.message);
+
+        console.log(error);
+      });
+    // } else {
+    //   alert('Invalid Phone Number');
+    // }
+  };
   render() {
     const Divider = props => {
       return (
@@ -29,41 +63,48 @@ export default class SignUpPhoneApp extends Component {
       );
     };
     return (
-      <View style={styles.container}>
-        <TouchableOpacity style={styles.btngoback}>
+      <SafeAreaView style={styles.container}>
+        <TouchableOpacity
+          onPress={() => this.props.navigation.navigate('Splash')}
+          style={styles.btngoback}>
           <Icon name="ios-arrow-back" color="#f57f17" size={32} />
         </TouchableOpacity>
-        <Text style={styles.txtTitle}>Sing In</Text>
+        <Text style={styles.txtTitle}>Create new account</Text>
+        <Text style={styles.txtquestion}>What's your phone number ?</Text>
         <TextInput
-          style={styles.edtInputEmail}
-          placeholder="E-mail !"
-          keyboardType="email-address"
-          onChangeText={email => this.setState({email: email})}
+          style={styles.edtPhoneNumber}
+          placeholder="Phone number"
+          keyboardType="numeric"
+          returnKeyType="done"
+          onChangeText={phone => this.setState({phoneNumber: phone})}
         />
-        <TextInput
-          style={styles.edtInputPass}
-          placeholder="Password !"
-          keyboardType="email-address"
-          onChangeText={pass => this.setState({password: pass})}
-        />
-        <TouchableOpacity style={styles.btnLogin}>
-          <Text style={{fontSize: 16, color: 'white'}}>Log In</Text>
-        </TouchableOpacity>
-        <Divider style={styles.divider} />
-        <TouchableOpacity style={styles.btnfacebook}>
-          <Text style={{fontSize: 16, color: 'white'}}>
-            Login With Facebook
+
+        <View style={styles.viewInput}>
+          <TouchableOpacity
+            style={styles.btnSendcode}
+            onPress={this.onSendCode}>
+            <Text style={{fontSize: 16, color: 'white'}}>Send code</Text>
+          </TouchableOpacity>
+          <Divider style={styles.divider} />
+          <TouchableOpacity style={styles.btnfacebook}>
+            <Text style={{fontSize: 16, color: 'white'}}>
+              Login With facebook
+            </Text>
+          </TouchableOpacity>
+        </View>
+        <TouchableOpacity style={{alignSelf: 'center', marginTop: 20}}>
+          <Text style={{fontSize: 16, color: '#f57f17'}}>
+            Sign in width E-mail
           </Text>
         </TouchableOpacity>
-      </View>
+      </SafeAreaView>
     );
   }
 }
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
     backgroundColor: 'white',
   },
   btngoback: {
@@ -76,27 +117,28 @@ const styles = StyleSheet.create({
     color: '#f57f17',
     position: 'absolute',
     left: 32,
-    top: Platform.OS == 'ios' ? 100 : 70,
+    top: Platform.OS == 'ios' ? 100 : 60,
     fontWeight: 'bold',
   },
-  line: {
-    height: 1,
-    flex: 2,
-    backgroundColor: 'black',
+  txtquestion: {
+    fontSize: 18,
+    color: 'black',
+    alignSelf: 'center',
+    fontWeight: 'bold',
+    marginTop: 150,
   },
-  textOr: {
-    flex: 1,
-    marginTop: 20,
-    marginBottom: 20,
-    textAlign: 'center',
+  edtPhoneNumber: {
+    width: 300,
+    height: 49,
+    borderColor: 'rgb(184,184,184)',
+    borderRadius: 30,
+    borderWidth: 1,
+    paddingLeft: 30,
+    alignSelf: 'center',
+    marginBottom: 30,
+    marginTop: 50,
   },
-  divider: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
-    width: 200,
-  },
-  btnLogin: {
+  btnSendcode: {
     alignItems: 'center',
     justifyContent: 'center',
     width: 270,
@@ -114,22 +156,23 @@ const styles = StyleSheet.create({
     borderRadius: 999,
     backgroundColor: 'rgb(1, 154, 235)',
   },
-  edtInputEmail: {
-    width: 300,
-    height: 49,
-    borderColor: 'rgb(184,184,184)',
-    borderRadius: 30,
-    borderWidth: 1,
-    paddingLeft: 30,
-    marginBottom: 30,
+  line: {
+    height: 1,
+    flex: 2,
+    backgroundColor: 'black',
   },
-  edtInputPass: {
-    width: 300,
-    height: 49,
-    borderColor: 'rgb(184,184,184)',
-    borderRadius: 30,
-    borderWidth: 1,
-    paddingLeft: 30,
+  textOr: {
+    flex: 1,
+    marginTop: 30,
     marginBottom: 30,
+    textAlign: 'center',
   },
+  divider: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    alignSelf: 'center',
+    width: 200,
+  },
+  viewInput: {alignSelf: 'center'},
 });
