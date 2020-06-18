@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "453601679643",
+    "firebase_url": "https://sns-vvc.firebaseio.com",
+    "project_id": "sns-vvc",
+    "storage_bucket": "sns-vvc.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:453601679643:android:e011238d765f1ad6ad5bbe",
+        "android_client_info": {
+          "package_name": "com.social_network"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "453601679643-46e8kdrdrda1c4qtr6o9enedb1k9g8s2.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAAchk38VKQZdjXzB6UxVyHDH3q4HdMOak"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "453601679643-46e8kdrdrda1c4qtr6o9enedb1k9g8s2.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

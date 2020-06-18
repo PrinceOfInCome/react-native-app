@@ -1,60 +1,71 @@
 import * as React from 'react';
 import {NavigationContainer} from '@react-navigation/native';
 import {createStackNavigator} from '@react-navigation/stack';
-import SplashApp from '../screen/SplashApp';
-import LoginApp from '../screen/LoginApp';
-import ProfileApp from '../screen/ProfileApp';
-import SettingApp from '../screen/SettingApp';
-import SignUpApp from '../screen/SignUpApp';
-import HomeApp from '../screen/HomeApp';
-import SignUpPhoneApp from '../screen/SignUpPhoneApp';
-import VerifyCode from '../screen/VerifyCode';
-import {navigationRef} from './RootNavigator';
-import TabNavigation from './Tab/TabNavigation';
+import Home from '../container/home';
+import Splash from '../container/splash';
+import Chat from '../container/chat';
+import Dashboard from '../container/dashboard';
+import Login from '../container/login';
+import SignUp from '../container/signUp';
+import TabBottomNavigation from '../navigation/tabNavigator/TabBottomNavigation';
+import Profile from '../container/profile';
+import ShowFullImg from '../container/showFullimg';
+import SendChat from '../container/sendChat';
 const Stack = createStackNavigator();
 
-export default function App() {
+function AppStack() {
   return (
-    <NavigationContainer ref={navigationRef}>
-      <Stack.Navigator initialRouteName="App">
+    <NavigationContainer>
+      <Stack.Navigator initialRouteName="Splash">
         <Stack.Screen
-          name="App"
-          component={TabNavigation}
+          name="TabBottom"
+          component={TabBottomNavigation}
           options={{headerShown: false}}
         />
         <Stack.Screen
           name="Splash"
-          component={SplashApp}
+          component={Splash}
           options={{headerShown: false}}
         />
         <Stack.Screen
           name="Home"
-          component={HomeApp}
+          component={Home}
+          options={{headerShown: false}}
+        />
+        <Stack.Screen
+          name="Chat"
+          component={Chat}
+          options={{headerShown: false}}
+        />
+        <Stack.Screen name="Dashboard" component={Dashboard} />
+        <Stack.Screen
+          name="Login"
+          component={Login}
           options={{headerShown: false}}
         />
         <Stack.Screen
           name="SignUp"
-          component={SignUpApp}
-          options={{headerShown: false}}
-        />
-        <Stack.Screen name="Setting" component={SettingApp} />
-        <Stack.Screen
-          name="Login"
-          component={LoginApp}
-          options={{headerShown: false}}
-        />
-        <Stack.Screen name="Profile" component={ProfileApp} />
-        <Stack.Screen
-          name="SignUpPhone"
-          component={SignUpPhoneApp}
+          component={SignUp}
           options={{headerShown: false}}
         />
         <Stack.Screen
-          name="Verify"
-          component={VerifyCode}
+          name="Profile"
+          component={Profile}
+          options={{headerShown: false}}
+        />
+        <Stack.Screen
+          name="ShowImg"
+          component={ShowFullImg}
+          options={{headerShown: false}}
+        />
+        <Stack.Screen
+          name="SendChat"
+          component={SendChat}
           options={{headerShown: false}}
         />
       </Stack.Navigator>
     </NavigationContainer>
   );
 }
+
+export default AppStack;
